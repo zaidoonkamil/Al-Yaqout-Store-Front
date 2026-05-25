@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 215" fill="none">
+
+  <!-- ══ OUTER LEFT BOTANICAL SPRIG ══ -->
+  <g fill="currentColor">
+    <!-- stem -->
+    <path d="M68 195 C66 178 62 160 57 142 C55 134 52 126 50 118" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <!-- leaf 1 bottom -->
+    <path d="M60 178 C52 168 40 162 32 155 C36 148 50 152 60 162 C62 168 62 174 60 178Z"/>
+    <!-- leaf 2 mid -->
+    <path d="M56 158 C46 146 36 138 30 128 C36 122 50 128 57 142 C58 148 57 154 56 158Z"/>
+    <!-- leaf 3 upper -->
+    <path d="M52 136 C44 122 38 110 38 98 C46 96 56 106 58 120 C58 128 56 132 52 136Z"/>
+    <!-- leaf 4 top small -->
+    <path d="M50 118 C46 106 46 94 52 84 C58 88 60 102 56 116 C54 118 52 118 50 118Z"/>
+  </g>
+
+  <!-- ══ OUTER RIGHT BOTANICAL SPRIG ══ -->
+  <g fill="currentColor">
+    <path d="M232 195 C234 178 238 160 243 142 C245 134 248 126 250 118" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M240 178 C248 168 260 162 268 155 C264 148 250 152 240 162 C238 168 238 174 240 178Z"/>
+    <path d="M244 158 C254 146 264 138 270 128 C264 122 250 128 243 142 C242 148 243 154 244 158Z"/>
+    <path d="M248 136 C256 122 262 110 262 98 C254 96 244 106 242 120 C242 128 244 132 248 136Z"/>
+    <path d="M250 118 C254 106 254 94 248 84 C242 88 240 102 244 116 C246 118 248 118 250 118Z"/>
+  </g>
+
+  <!-- ══ MAIN CIRCLE ══ -->
+  <circle cx="150" cy="105" r="78" stroke="currentColor" stroke-width="4" fill="none"/>
+
+  <!-- ══ INNER BOTTOM LEAVES (inside circle) ══ -->
+  <g fill="currentColor">
+    <!-- left inner leaf pair -->
+    <path d="M116 168 C108 156 104 142 108 130 C116 134 120 148 116 162 C116 164 116 166 116 168Z"/>
+    <path d="M116 168 C122 154 124 140 118 128 C112 134 112 150 116 164 C116 166 116 168 116 168Z"/>
+    <!-- right inner leaf pair -->
+    <path d="M184 168 C192 156 196 142 192 130 C184 134 180 148 184 162 C184 164 184 166 184 168Z"/>
+    <path d="M184 168 C178 154 176 140 182 128 C188 134 188 150 184 164 C184 166 184 168 184 168Z"/>
+  </g>
+
+  <!-- ══ RAYS / SPARKLE ABOVE DIAMOND ══ -->
+  <g stroke="currentColor" stroke-linecap="round" fill="none">
+    <!-- center ray -->
+    <line x1="150" y1="27" x2="150" y2="14" stroke-width="3.5"/>
+    <!-- left rays -->
+    <line x1="132" y1="30" x2="127" y2="18" stroke-width="3"/>
+    <line x1="115" y1="38" x2="107" y2="27" stroke-width="2.8"/>
+    <line x1="101" y1="51" x2="91"  y2="43" stroke-width="2.5"/>
+    <!-- right rays -->
+    <line x1="168" y1="30" x2="173" y2="18" stroke-width="3"/>
+    <line x1="185" y1="38" x2="193" y2="27" stroke-width="2.8"/>
+    <line x1="199" y1="51" x2="209" y2="43" stroke-width="2.5"/>
+  </g>
+
+  <!-- ══ DIAMOND GEM ══ -->
+  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Main outline -->
+    <polygon points="128,62 172,62 196,95 150,155 104,95" stroke-width="3.5"/>
+
+    <!-- Girdle (horizontal divider) -->
+    <line x1="104" y1="95" x2="196" y2="95" stroke-width="2.5"/>
+
+    <!-- Crown upper facets -->
+    <line x1="128" y1="62" x2="150" y2="95" stroke-width="2"/>
+    <line x1="172" y1="62" x2="150" y2="95" stroke-width="2"/>
+
+    <!-- Crown bezel facets (inner table lines) -->
+    <line x1="128" y1="62" x2="136" y2="78" stroke-width="1.8"/>
+    <line x1="172" y1="62" x2="164" y2="78" stroke-width="1.8"/>
+    <line x1="136" y1="78" x2="164" y2="78" stroke-width="1.8"/>
+    <line x1="136" y1="78" x2="104" y2="95" stroke-width="1.8"/>
+    <line x1="164" y1="78" x2="196" y2="95" stroke-width="1.8"/>
+    <line x1="136" y1="78" x2="150" y2="95" stroke-width="1.8"/>
+    <line x1="164" y1="78" x2="150" y2="95" stroke-width="1.8"/>
+
+    <!-- Pavilion facets (lower half) -->
+    <line x1="150" y1="95"  x2="150" y2="155" stroke-width="2"/>
+    <line x1="104" y1="95"  x2="127" y2="125" stroke-width="1.8"/>
+    <line x1="196" y1="95"  x2="173" y2="125" stroke-width="1.8"/>
+    <line x1="127" y1="125" x2="150" y2="155" stroke-width="1.8"/>
+    <line x1="173" y1="125" x2="150" y2="155" stroke-width="1.8"/>
+    <line x1="127" y1="125" x2="150" y2="95"  stroke-width="1.8"/>
+    <line x1="173" y1="125" x2="150" y2="95"  stroke-width="1.8"/>
+  </g>
+
+</svg>
