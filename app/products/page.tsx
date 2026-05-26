@@ -7,20 +7,25 @@ import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import ProductCard from "@/components/ProductCard";
 
-const CATEGORIES = ["الكل", "كتب", "رسم", "طباعة", "قرطاسية", "هدايا"];
-
 function ProductsContent() {
   const searchParams = useSearchParams();
   const initialCat = searchParams.get("cat") || "الكل";
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(["الكل"]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState(initialCat);
 
   useEffect(() => {
-    api.getProducts()
-      .then(setProducts)
+    Promise.all([
+      api.getProducts(),
+      api.getCategories(),
+    ])
+      .then(([prods, cats]) => {
+        setProducts(prods);
+        setCategories(["الكل", ...cats.map((c) => c.name)]);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -55,7 +60,7 @@ function ProductsContent() {
           </div>
           {/* Categories */}
           <div className="flex gap-2 overflow-x-auto carousel-container mt-2.5 pb-0.5">
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}

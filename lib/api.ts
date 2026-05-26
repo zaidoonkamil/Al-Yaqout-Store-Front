@@ -19,6 +19,23 @@ export interface DeliveryZone {
   active: boolean;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  emoji: string;
+  active: boolean;
+  sortOrder: number;
+}
+
+export interface OrderStats {
+  totalOrders: number;
+  totalRevenue: number;
+  totalDelivery: number;
+  netSales: number;
+  byStatus: { pending: number; confirmed: number; delivered: number; cancelled: number };
+  topProducts: { name: string; qty: number; revenue: number }[];
+}
+
 export interface Ad {
   id: number;
   image: string;
@@ -240,16 +257,68 @@ export const api = {
   updateDeliveryZone: async (id: number, data: { fee?: number; active?: boolean }, token: string): Promise<DeliveryZone> => {
     const res = await fetch(`${API_URL}/api/delivery-zones/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "فشل تحديث المحافظة");
-    }
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error || "فشل تحديث المحافظة"); }
+    return res.json();
+  },
+
+  // Public: Categories
+  getCategories: async (): Promise<Category[]> => {
+    const res = await fetch(`${API_URL}/api/categories`, { cache: "no-store" });
+    if (!res.ok) throw new Error("فشل تحميل الأقسام");
+    return res.json();
+  },
+
+  // Admin: Categories
+  getAllCategories: async (token: string): Promise<Category[]> => {
+    const res = await fetch(`${API_URL}/api/categories/all`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("فشل تحميل الأقسام");
+    return res.json();
+  },
+
+  createCategory: async (data: { name: string; emoji: string; sortOrder?: number }, token: string): Promise<Category> => {
+    const res = await fetch(`${API_URL}/api/categories`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error || "فشل إضافة القسم"); }
+    return res.json();
+  },
+
+  updateCategory: async (id: number, data: Partial<Category>, token: string): Promise<Category> => {
+    const res = await fetch(`${API_URL}/api/categories/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error || "فشل تعديل القسم"); }
+    return res.json();
+  },
+
+  deleteCategory: async (id: number, token: string): Promise<void> => {
+    const res = await fetch(`${API_URL}/api/categories/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error || "فشل حذف القسم"); }
+  },
+
+  // Admin: Order Stats (profit report)
+  getOrderStats: async (token: string, startDate?: string, endDate?: string): Promise<OrderStats> => {
+    const params = new URLSearchParams();
+    if (startDate) params.set("startDate", startDate);
+    if (endDate)   params.set("endDate", endDate);
+    const res = await fetch(`${API_URL}/api/orders/stats?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("فشل تحميل الإحصائيات");
     return res.json();
   },
 };

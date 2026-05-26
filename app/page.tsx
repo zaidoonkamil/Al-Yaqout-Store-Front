@@ -7,12 +7,15 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-const CATEGORIES = [
-  { label: "كتب",     emoji: "📚", from: "#1D4ED8", to: "#4F46E5" },
-  { label: "رسم",     emoji: "🎨", from: "#7C3AED", to: "#DB2777" },
-  { label: "طباعة",   emoji: "🖨️", from: "#0D9488", to: "#0284C7" },
-  { label: "قرطاسية", emoji: "🖊️", from: "#D97706", to: "#DC2626" },
-  { label: "هدايا",   emoji: "🎁", from: "#BE185D", to: "#9333EA" },
+const GRADIENT_COLORS = [
+  { from: "#1D4ED8", to: "#4F46E5" },
+  { from: "#7C3AED", to: "#DB2777" },
+  { from: "#0D9488", to: "#0284C7" },
+  { from: "#D97706", to: "#DC2626" },
+  { from: "#BE185D", to: "#9333EA" },
+  { from: "#059669", to: "#0891B2" },
+  { from: "#9333EA", to: "#0D9488" },
+  { from: "#DC2626", to: "#D97706" },
 ];
 
 const FEATURES = [
@@ -22,9 +25,10 @@ const FEATURES = [
 ];
 
 export default async function HomePage() {
-  const [products, ads] = await Promise.all([
+  const [products, ads, categories] = await Promise.all([
     api.getProducts().catch(() => []),
     api.getAds().catch(() => []),
+    api.getCategories().catch(() => []),
   ]);
 
   const latest   = products.slice(0, 8);
@@ -80,22 +84,25 @@ export default async function HomePage() {
             </div>
 
             {/* Mobile: horizontal scroll / Desktop: grid */}
-            <div className="flex gap-3 overflow-x-auto carousel-container pb-2 md:grid md:grid-cols-5 md:overflow-visible">
-              {CATEGORIES.map((cat) => (
-                <Link key={cat.label} href={`/products?cat=${encodeURIComponent(cat.label)}`}
-                  className="flex-shrink-0 md:flex-shrink group btn-press">
-                  <div className="w-24 md:w-full rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
-                    <div className="h-20 md:h-28 flex flex-col items-center justify-center gap-2 relative"
-                      style={{ background: `linear-gradient(135deg, ${cat.from}, ${cat.to})` }}>
-                      {/* Background circles */}
-                      <div className="absolute top-1 right-1 w-12 h-12 rounded-full bg-white/10" />
-                      <div className="absolute bottom-1 left-1 w-8 h-8 rounded-full bg-white/10" />
-                      <span className="text-2xl md:text-3xl relative z-10 drop-shadow">{cat.emoji}</span>
-                      <span className="text-white font-black text-xs md:text-sm relative z-10">{cat.label}</span>
+            <div className={`flex gap-3 overflow-x-auto carousel-container pb-2 md:grid md:overflow-visible`}
+              style={{ gridTemplateColumns: categories.length > 0 ? `repeat(${Math.min(categories.length, 5)}, minmax(0, 1fr))` : undefined }}>
+              {categories.map((cat, i) => {
+                const colors = GRADIENT_COLORS[i % GRADIENT_COLORS.length];
+                return (
+                  <Link key={cat.id} href={`/products?cat=${encodeURIComponent(cat.name)}`}
+                    className="flex-shrink-0 md:flex-shrink group btn-press">
+                    <div className="w-24 md:w-full rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                      <div className="h-20 md:h-28 flex flex-col items-center justify-center gap-2 relative"
+                        style={{ background: `linear-gradient(135deg, ${colors.from}, ${colors.to})` }}>
+                        <div className="absolute top-1 right-1 w-12 h-12 rounded-full bg-white/10" />
+                        <div className="absolute bottom-1 left-1 w-8 h-8 rounded-full bg-white/10" />
+                        <span className="text-2xl md:text-3xl relative z-10 drop-shadow">{cat.emoji}</span>
+                        <span className="text-white font-black text-xs md:text-sm relative z-10">{cat.name}</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
 
