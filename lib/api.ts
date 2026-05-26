@@ -5,10 +5,18 @@ export interface Product {
   name: string;
   description: string | null;
   price: number;
+  costPrice: number | null;
   image: string | null;
   category: string | null;
   inStock: boolean;
   createdAt: string;
+}
+
+export interface DeliveryZone {
+  id: number;
+  governorate: string;
+  fee: number;
+  active: boolean;
 }
 
 export interface Ad {
@@ -27,6 +35,8 @@ export interface Order {
   items: CartItemData[];
   total: number;
   notes: string | null;
+  governorate: string | null;
+  deliveryFee: number;
   status: "pending" | "confirmed" | "delivered" | "cancelled";
   createdAt: string;
 }
@@ -75,6 +85,13 @@ export const api = {
     return res.json();
   },
 
+  // Delivery Zones (public)
+  getDeliveryZones: async (): Promise<DeliveryZone[]> => {
+    const res = await fetch(`${API_URL}/api/delivery-zones`, { cache: "no-store" });
+    if (!res.ok) throw new Error("فشل تحميل مناطق التوصيل");
+    return res.json();
+  },
+
   // Orders
   createOrder: async (data: {
     customerName: string;
@@ -83,6 +100,8 @@ export const api = {
     items: CartItemData[];
     total: number;
     notes?: string;
+    governorate?: string;
+    deliveryFee?: number;
   }): Promise<{ message: string; order: Order }> => {
     const res = await fetch(`${API_URL}/api/orders`, {
       method: "POST",
@@ -206,5 +225,31 @@ export const api = {
       const err = await res.json();
       throw new Error(err.error || "فشل حذف الإعلان");
     }
+  },
+
+  // Admin: Delivery Zones
+  getAllDeliveryZones: async (token: string): Promise<DeliveryZone[]> => {
+    const res = await fetch(`${API_URL}/api/delivery-zones/all`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("فشل تحميل المحافظات");
+    return res.json();
+  },
+
+  updateDeliveryZone: async (id: number, data: { fee?: number; active?: boolean }, token: string): Promise<DeliveryZone> => {
+    const res = await fetch(`${API_URL}/api/delivery-zones/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "فشل تحديث المحافظة");
+    }
+    return res.json();
   },
 };

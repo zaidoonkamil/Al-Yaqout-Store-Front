@@ -10,6 +10,7 @@ interface FormState {
   name: string;
   description: string;
   price: string;
+  costPrice: string;
   category: string;
   inStock: boolean;
   image: File | null;
@@ -19,6 +20,7 @@ const emptyForm: FormState = {
   name: "",
   description: "",
   price: "",
+  costPrice: "",
   category: "",
   inStock: true,
   image: null,
@@ -65,6 +67,7 @@ export default function AdminProductsPage() {
       name: p.name,
       description: p.description || "",
       price: String(p.price),
+      costPrice: p.costPrice ? String(p.costPrice) : "",
       category: p.category || "",
       inStock: p.inStock,
       image: null,
@@ -83,6 +86,7 @@ export default function AdminProductsPage() {
       fd.append("name", form.name);
       fd.append("description", form.description);
       fd.append("price", form.price);
+      fd.append("costPrice", form.costPrice || "");
       fd.append("category", form.category);
       fd.append("inStock", String(form.inStock));
       if (form.image) fd.append("image", form.image);
@@ -180,6 +184,11 @@ export default function AdminProductsPage() {
                     <p className="text-yaqut-gold font-black text-sm mt-0.5">
                       {Number(p.price).toLocaleString("ar-IQ")} د.ع
                     </p>
+                    {p.costPrice && (
+                      <p className="text-green-600 text-xs font-semibold mt-0.5">
+                        ربح: {(Number(p.price) - Number(p.costPrice)).toLocaleString("ar-IQ")} د.ع
+                      </p>
+                    )}
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={() => openEdit(p)}
@@ -249,7 +258,7 @@ export default function AdminProductsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm font-bold text-yaqut-primary block mb-1">السعر (د.ع) *</label>
+                    <label className="text-sm font-bold text-yaqut-primary block mb-1">سعر البيع (د.ع) *</label>
                     <input
                       type="number"
                       value={form.price}
@@ -260,16 +269,28 @@ export default function AdminProductsPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-bold text-yaqut-primary block mb-1">الفئة</label>
-                    <select
-                      value={form.category}
-                      onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-yaqut-purple bg-white"
-                    >
-                      <option value="">اختر...</option>
-                      {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <label className="text-sm font-bold text-yaqut-primary block mb-1">سعر التكلفة (د.ع)</label>
+                    <input
+                      type="number"
+                      value={form.costPrice}
+                      onChange={(e) => setForm((f) => ({ ...f, costPrice: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-yaqut-purple"
+                      placeholder="0 (اختياري)"
+                      min="0"
+                    />
                   </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-yaqut-primary block mb-1">الفئة</label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-yaqut-purple bg-white"
+                  >
+                    <option value="">اختر...</option>
+                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
 
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">

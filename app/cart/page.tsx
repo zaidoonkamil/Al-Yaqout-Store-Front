@@ -124,9 +124,9 @@ export default function CartPage() {
         </div>
       </main>
 
-      {/* Mobile fixed bottom bar */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-100 shadow-nav">
-        <div className="px-4 pt-3 pb-2 bottom-nav flex gap-3">
+      {/* Mobile fixed bottom bar — sits above BottomNav (60px) */}
+      <div className="md:hidden fixed bottom-[60px] inset-x-0 z-40 bg-white border-t border-gray-100 shadow-nav">
+        <div className="px-4 py-3 flex gap-3">
           <div className="flex-1">
             <div className="flex justify-between mb-1">
               <span className="text-yaqut-muted text-xs font-medium">الإجمالي</span>

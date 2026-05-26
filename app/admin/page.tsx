@@ -133,6 +133,13 @@ export default function AdminDashboardPage() {
                   <span className="text-amber-600 font-bold text-sm">إعلانات</span>
                 </Link>
                 <Link
+                  href="/admin/delivery"
+                  className="flex items-center gap-3 p-3 bg-teal-50 rounded-xl hover:bg-teal-100 transition-colors btn-press"
+                >
+                  <span className="text-2xl">🚚</span>
+                  <span className="text-teal-600 font-bold text-sm">رسوم التوصيل</span>
+                </Link>
+                <Link
                   href="/"
                   target="_blank"
                   className="flex items-center gap-3 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition-colors btn-press"
