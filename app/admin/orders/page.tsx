@@ -13,6 +13,168 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_OPTIONS = ["pending", "confirmed", "delivered", "cancelled"];
 
+function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  const itemsTotal = (order.items || []).reduce((s, i) => s + i.price * i.quantity, 0);
+  const deliveryFee = Number(order.deliveryFee || 0);
+
+  const handlePrint = () => window.print();
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 print:p-0 print:bg-white print:inset-0">
+      <div
+        id="invoice-print"
+        className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto print:rounded-none print:max-h-none print:shadow-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="bg-yaqut-primary p-6 rounded-t-3xl print:rounded-none text-center print:bg-white print:border-b-4 print:border-gray-800">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.svg"
+              alt="مكتبة الياقوت"
+              className="w-10 h-10 print:hidden"
+              style={{ filter: "invert(73%) sepia(54%) saturate(726%) hue-rotate(4deg) brightness(92%)" }}
+            />
+            <h1 className="text-white font-black text-2xl print:text-black">مكتبة الياقوت</h1>
+          </div>
+          <p className="text-white/70 text-sm print:text-gray-600">البصرة، العراق · 07839957101</p>
+          <div className="mt-3 inline-block bg-white/20 px-4 py-1 rounded-full print:border print:border-gray-300 print:bg-white">
+            <p className="text-white font-black print:text-black">فاتورة رقم #{order.id}</p>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="p-6 space-y-5">
+
+          {/* Order info */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-gray-50 rounded-2xl p-3 print:border print:border-gray-200 print:bg-white">
+              <p className="text-xs text-gray-500 font-medium mb-1">التاريخ</p>
+              <p className="font-bold text-yaqut-primary text-sm">
+                {new Date(order.createdAt).toLocaleDateString("ar-IQ", {
+                  year: "numeric", month: "long", day: "numeric"
+                })}
+              </p>
+            </div>
+            <div className="bg-gray-50 rounded-2xl p-3 print:border print:border-gray-200 print:bg-white">
+              <p className="text-xs text-gray-500 font-medium mb-1">الحالة</p>
+              <p className="font-bold text-sm" style={{
+                color: order.status === "delivered" ? "#065F46"
+                  : order.status === "confirmed" ? "#1E40AF"
+                  : order.status === "cancelled" ? "#991B1B" : "#92400E"
+              }}>
+                {STATUS_LABELS[order.status]}
+              </p>
+            </div>
+          </div>
+
+          {/* Customer info */}
+          <div className="bg-gray-50 rounded-2xl p-4 print:border print:border-gray-200 print:bg-white space-y-2">
+            <p className="text-xs font-black text-yaqut-muted uppercase tracking-wider mb-2">بيانات الزبون</p>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">الاسم</span>
+              <span className="font-bold text-yaqut-primary">{order.customerName}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">الهاتف</span>
+              <span className="font-bold text-yaqut-primary" dir="ltr">{order.customerPhone}</span>
+            </div>
+            {order.governorate && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">المحافظة</span>
+                <span className="font-bold text-yaqut-primary">{order.governorate}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">العنوان</span>
+              <span className="font-bold text-yaqut-primary text-right max-w-[60%]">{order.address}</span>
+            </div>
+            {order.notes && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">ملاحظات</span>
+                <span className="font-medium text-yaqut-primary text-right max-w-[60%]">{order.notes}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Items table */}
+          <div>
+            <p className="text-xs font-black text-yaqut-muted uppercase tracking-wider mb-3">تفاصيل الطلب</p>
+            <div className="border border-gray-200 rounded-2xl overflow-hidden print:rounded-none">
+              <table className="w-full text-sm">
+                <thead className="bg-yaqut-primary text-white print:bg-gray-100 print:text-black">
+                  <tr>
+                    <th className="text-right px-3 py-2.5 font-bold">المنتج</th>
+                    <th className="text-center px-3 py-2.5 font-bold">الكمية</th>
+                    <th className="text-center px-3 py-2.5 font-bold">السعر</th>
+                    <th className="text-left px-3 py-2.5 font-bold">الإجمالي</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(order.items || []).map((item, i) => (
+                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                      <td className="px-3 py-2.5 font-medium text-yaqut-primary">{item.name}</td>
+                      <td className="px-3 py-2.5 text-center text-gray-600">{item.quantity}</td>
+                      <td className="px-3 py-2.5 text-center text-gray-600">{Number(item.price).toLocaleString("ar-IQ")}</td>
+                      <td className="px-3 py-2.5 text-left font-bold text-yaqut-primary">
+                        {(item.price * item.quantity).toLocaleString("ar-IQ")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Totals */}
+          <div className="bg-gray-50 rounded-2xl p-4 print:border print:border-gray-200 print:bg-white space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">المنتجات</span>
+              <span className="font-semibold">{itemsTotal.toLocaleString("ar-IQ")} د.ع</span>
+            </div>
+            {deliveryFee > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">رسوم التوصيل</span>
+                <span className="font-semibold">{deliveryFee.toLocaleString("ar-IQ")} د.ع</span>
+              </div>
+            )}
+            <div className="flex justify-between border-t border-gray-200 pt-2 mt-1">
+              <span className="font-black text-yaqut-primary text-base">الإجمالي الكلي</span>
+              <span className="font-black text-yaqut-gold text-xl">
+                {Number(order.total).toLocaleString("ar-IQ")} د.ع
+              </span>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-gray-400 pt-2">
+            شكراً لتعاملكم مع مكتبة الياقوت 💛
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="px-6 pb-6 flex gap-3 print:hidden">
+          <button
+            onClick={handlePrint}
+            className="flex-1 bg-yaqut-primary text-white py-3 rounded-2xl font-black btn-press flex items-center justify-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            طباعة الفاتورة
+          </button>
+          <button
+            onClick={onClose}
+            className="px-5 py-3 rounded-2xl border-2 border-gray-200 text-gray-600 font-bold btn-press"
+          >
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminOrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -22,6 +184,7 @@ export default function AdminOrdersPage() {
   const [total, setTotal] = useState(0);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [updating, setUpdating] = useState<number | null>(null);
+  const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") || "" : "";
 
@@ -103,6 +266,9 @@ export default function AdminOrdersPage() {
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${getStatusClass(order.status)}`}>
                         {STATUS_LABELS[order.status]}
                       </span>
+                      {order.governorate && (
+                        <span className="text-xs text-gray-400 font-medium">📍 {order.governorate}</span>
+                      )}
                     </div>
                     <p className="font-bold text-yaqut-primary truncate">{order.customerName}</p>
                     <p className="text-yaqut-muted text-xs mt-0.5">
@@ -155,11 +321,19 @@ export default function AdminOrdersPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex justify-between mt-2 pt-2 border-t border-gray-200">
-                        <span className="text-sm font-bold text-yaqut-primary">الإجمالي</span>
-                        <span className="text-sm font-black text-yaqut-gold">
-                          {Number(order.total).toLocaleString("ar-IQ")} د.ع
-                        </span>
+                      <div className="space-y-1 mt-2 pt-2 border-t border-gray-200">
+                        {Number(order.deliveryFee) > 0 && (
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>رسوم التوصيل ({order.governorate})</span>
+                            <span>{Number(order.deliveryFee).toLocaleString("ar-IQ")} د.ع</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-sm font-bold text-yaqut-primary">الإجمالي الكلي</span>
+                          <span className="text-sm font-black text-yaqut-gold">
+                            {Number(order.total).toLocaleString("ar-IQ")} د.ع
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -184,16 +358,28 @@ export default function AdminOrdersPage() {
                       </div>
                     </div>
 
-                    {/* Phone CTA */}
-                    <a
-                      href={`tel:${order.customerPhone}`}
-                      className="flex items-center gap-2 bg-yaqut-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold btn-press w-fit"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                      </svg>
-                      اتصل بـ {order.customerName}
-                    </a>
+                    {/* Actions row */}
+                    <div className="flex gap-2 flex-wrap">
+                      <a
+                        href={`tel:${order.customerPhone}`}
+                        className="flex items-center gap-2 bg-yaqut-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold btn-press"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                        </svg>
+                        اتصل بـ {order.customerName}
+                      </a>
+
+                      <button
+                        onClick={() => setInvoiceOrder(order)}
+                        className="flex items-center gap-2 bg-yaqut-gold text-yaqut-primary px-4 py-2.5 rounded-xl text-sm font-bold btn-press"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        فاتورة
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -224,6 +410,11 @@ export default function AdminOrdersPage() {
           </div>
         )}
       </main>
+
+      {/* Invoice Modal */}
+      {invoiceOrder && (
+        <InvoiceModal order={invoiceOrder} onClose={() => setInvoiceOrder(null)} />
+      )}
     </div>
   );
 }

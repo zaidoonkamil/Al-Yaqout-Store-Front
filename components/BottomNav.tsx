@@ -57,7 +57,10 @@ export default function BottomNav() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Hide on pages that have their own fixed bottom action bar
   if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/product/")) return null;
+  if (pathname === "/cart") return null;
 
   return (
     /* md:hidden — يختفي على الكمبيوتر، يظهر فقط على الموبايل */

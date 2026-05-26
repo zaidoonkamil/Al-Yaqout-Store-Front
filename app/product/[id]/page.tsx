@@ -174,9 +174,9 @@ export default function ProductDetailPage() {
         </div>
       </main>
 
-      {/* Mobile fixed bottom action — sits above BottomNav (60px) */}
-      <div className="md:hidden fixed bottom-[60px] inset-x-0 z-40 bg-white border-t border-gray-100 shadow-nav">
-        <div className="px-4 py-3 flex gap-3">
+      {/* Mobile fixed bottom action */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-100 shadow-nav">
+        <div className="px-4 py-3 flex gap-3" style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)" }}>
           <button onClick={handleAdd} disabled={!product.inStock}
             className={`flex-1 py-3.5 rounded-2xl font-black btn-press transition-all flex items-center justify-center gap-2 ${
               added ? "bg-green-500 text-white" : product.inStock ? "bg-yaqut-purple text-white" : "bg-gray-200 text-gray-400 cursor-not-allowed"

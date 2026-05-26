@@ -204,3 +204,18 @@ main { animation: pageFade 0.3s ease; }
   height: 1px;
   background: linear-gradient(to left, transparent, rgba(30,13,69,0.08), transparent);
 }
+
+/* Print styles for invoice */
+@media print {
+  body * { visibility: hidden; }
+  #invoice-print, #invoice-print * { visibility: visible; }
+  #invoice-print {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
