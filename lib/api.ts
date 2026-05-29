@@ -52,6 +52,7 @@ export interface Order {
   items: CartItemData[];
   total: number;
   notes: string | null;
+  instagramUsername: string | null;
   governorate: string | null;
   deliveryFee: number;
   status: "pending" | "confirmed" | "delivered" | "cancelled";
@@ -117,6 +118,7 @@ export const api = {
     items: CartItemData[];
     total: number;
     notes?: string;
+    instagramUsername?: string;
     governorate?: string;
     deliveryFee?: number;
   }): Promise<{ message: string; order: Order }> => {

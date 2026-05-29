@@ -90,6 +90,12 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
               <span className="text-gray-500">العنوان</span>
               <span className="font-bold text-yaqut-primary text-right max-w-[60%]">{order.address}</span>
             </div>
+            {order.instagramUsername && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">انستقرام</span>
+                <span className="font-bold text-pink-600" dir="ltr">@{order.instagramUsername}</span>
+              </div>
+            )}
             {order.notes && (
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">ملاحظات</span>
@@ -297,6 +303,21 @@ export default function AdminOrdersPage() {
                       <p className="text-xs font-bold text-yaqut-muted mb-1">العنوان</p>
                       <p className="text-sm text-yaqut-primary">{order.address}</p>
                     </div>
+
+                    {/* Instagram */}
+                    {order.instagramUsername && (
+                      <div>
+                        <p className="text-xs font-bold text-yaqut-muted mb-1">انستقرام</p>
+                        <a
+                          href={`https://instagram.com/${order.instagramUsername}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="text-sm font-bold text-pink-600 hover:underline"
+                          dir="ltr"
+                        >
+                          @{order.instagramUsername}
+                        </a>
+                      </div>
+                    )}
 
                     {/* Notes */}
                     {order.notes && (

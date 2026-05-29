@@ -17,6 +17,7 @@ export default function CheckoutPage() {
     address: "",
     notes: "",
     governorate: "",
+    instagramUsername: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -58,6 +59,7 @@ export default function CheckoutPage() {
         customerPhone: form.customerPhone.trim(),
         address: form.address.trim(),
         notes: form.notes.trim() || undefined,
+        instagramUsername: form.instagramUsername.trim() || undefined,
         governorate: form.governorate,
         deliveryFee,
         items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
@@ -175,6 +177,21 @@ export default function CheckoutPage() {
                   placeholder="المنطقة، الشارع، أقرب نقطة دالة..." rows={3}
                   className={`w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-yaqut-purple transition-all resize-none ${errors.address ? "border-red-400 bg-red-50" : "border-gray-200 bg-white focus:border-yaqut-purple"}`} />
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+              </div>
+
+              {/* Instagram */}
+              <div>
+                <label className="block text-yaqut-primary font-bold text-sm mb-1.5">
+                  حساب الانستقرام
+                  <span className="text-yaqut-muted font-normal mr-1">(اختياري)</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm select-none">@</span>
+                  <input type="text" value={form.instagramUsername}
+                    onChange={(e) => setForm((f) => ({ ...f, instagramUsername: e.target.value.replace(/^@/, "") }))}
+                    placeholder="your_username" dir="ltr"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-8 text-sm focus:ring-2 focus:ring-yaqut-purple transition-all bg-white text-left" />
+                </div>
               </div>
 
               {/* Notes */}
