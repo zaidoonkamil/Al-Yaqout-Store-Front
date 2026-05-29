@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { api, type Product, imageUrl } from "@/lib/api";
+import { api, type Product, type Category, imageUrl } from "@/lib/api";
 import AdminSidebar from "@/components/AdminSidebar";
-
-const CATEGORIES = ["كتب", "رسم", "طباعة", "قرطاسية", "هدايا", "أخرى"];
 
 interface FormState {
   name: string;
@@ -36,6 +34,7 @@ export default function AdminProductsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") || "" : "";
@@ -43,6 +42,7 @@ export default function AdminProductsPage() {
   useEffect(() => {
     if (!token) { router.replace("/admin/login"); return; }
     load();
+    api.getAllCategories(token).then(setCategories).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -289,7 +289,9 @@ export default function AdminProductsPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-yaqut-purple bg-white"
                   >
                     <option value="">اختر...</option>
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.name}>{c.emoji} {c.name}</option>
+                    ))}
                   </select>
                 </div>
 

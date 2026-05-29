@@ -21,6 +21,8 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   if (e.request.url.includes("/api/") || e.request.url.includes("/uploads/")) return;
+  // Admin panel — never cache, always fresh
+  if (new URL(e.request.url).pathname.startsWith("/admin")) return;
 
   // HTML navigation requests — always network first so page content stays fresh
   if (e.request.mode === "navigate") {
